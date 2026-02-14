@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Modelo de Zonas JRUN LAB</title>
+
+<style>
+body {
+  background:#111;
+  color:white;
+  font-family:Arial, sans-serif;
+  text-align:center;
+  padding:40px;
+}
+
+.container {
+  max-width:500px;
+  margin:auto;
+}
+
+input, select {
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+}
+
+button {
+  width:100%;
+  padding:12px;
+  background:#ff6a00;
+  color:white;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.result {
+  margin-top:25px;
+  background:#1c1c1c;
+  padding:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Modelo de Zonas JRUN LAB</h1>
+  <p>Calcula tus zonas reales a partir de tu marca en 5K o 10K</p>
+
+  <select id="distance">
+    <option value="5">5K</option>
+    <option value="10">10K</option>
+  </select>
+
+  <input type="number" id="minutes" placeholder="Minutos">
+  <input type="number" id="seconds" placeholder="Segundos">
+
+  <button onclick="calculate()">Calcular Zonas</button>
+
+  <div class="result" id="output"></div>
+
+  <p style="margin-top:20px;">
+  El 80% de los corredores no entrena en su zona correcta.
+  </p>
+
+  <a href="https://wa.link/ds6qw3" 
+     style="display:block;background:#ff6a00;padding:12px;color:white;text-decoration:none;margin-top:10px;">
+     Solicitar Evaluación JRUN
+  </a>
+
+</div>
+
+<script>
+function paceFromSpeed(speed){
+    let paceMin = 60 / speed;
+    let min = Math.floor(paceMin);
+    let sec = Math.round((paceMin - min) * 60);
+    if(sec < 10){ sec = "0" + sec; }
+    return min + ":" + sec + " /km";
+}
+
+function calculate(){
+    let distance = parseFloat(document.getElementById("distance").value);
+    let minutes = parseFloat(document.getElementById("minutes").value);
+    let seconds = parseFloat(document.getElementById("seconds").value);
+
+    let totalMinutes = minutes + (seconds / 60);
+    let speed = distance / (totalMinutes / 60);
+
+    let vam = (distance == 5) ? speed : speed / 0.92;
+
+    let z1 = vam * 0.60;
+    let z2 = vam * 0.80;
+    let z3 = vam;
+
+    document.getElementById("output").innerHTML = `
+        <h3>Resultados:</h3>
+        <p><strong>VAM:</strong> ${vam.toFixed(2)} km/h (${paceFromSpeed(vam)})</p>
+        <hr>
+        <p><strong>Zona 3 (80-100%):</strong> ${paceFromSpeed(z2)} – ${paceFromSpeed(z3)}</p>
+        <p><strong>Zona 2 (60-80%):</strong> ${paceFromSpeed(z1)} – ${paceFromSpeed(z2)}</p>
+        <p><strong>Zona 1 (<60%):</strong> Más lento que ${paceFromSpeed(z1)}</p>
+    `;
+}
+</script>
+
+</body>
+</html>
